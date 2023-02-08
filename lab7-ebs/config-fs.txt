@@ -1,0 +1,102 @@
+# Create and Configure Your File System
+View the storage available on your instance:
+```
+df -h
+```
+You should see output similar to:
+```
+Filesystem      Size  Used Avail Use% Mounted on
+
+devtmpfs        484M     0  484M   0% /dev
+
+tmpfs           492M     0  492M   0% /dev/shm
+
+tmpfs           492M  460K  491M   1% /run
+
+tmpfs           492M     0  492M   0% /sys/fs/cgroup
+
+/dev/xvda1      8.0G  1.5G  6.6G  19% /
+
+tmpfs            99M     0   99M   0% /run/user/0
+
+tmpfs            99M     0   99M   0% /run/user/1000
+```
+This is showing the original 8GB disk volume. Your new volume is not yet shown.
+
+Create an ext3 file system on the new volume:
+```
+sudo mkfs -t ext3 /dev/sdf
+```
+Create a directory for mounting the new storage volume:
+```
+sudo mkdir /mnt/data-store
+```
+Mount the new volume:
+```
+sudo mount /dev/sdf /mnt/data-store
+```To configure the Linux instance to mount this volume whenever the instance is started, you will need to add a line to /etc/fstab.
+```
+echo "/dev/sdf   /mnt/data-store ext3 defaults,noatime 1 2" | sudo tee -a /etc/fstab
+```
+View the configuration file to see the setting on the last line:
+```
+cat /etc/fstab
+```
+View the available storage again:
+```
+df -h
+```
+The output will now contain an additional line - /dev/xvdf:
+```
+Filesystem      Size  Used Avail Use% Mounted on
+
+devtmpfs        484M     0  484M   0% /dev
+
+tmpfs           492M     0  492M   0% /dev/shm
+
+tmpfs           492M  460K  491M   1% /run
+
+tmpfs           492M     0  492M   0% /sys/fs/cgroup
+
+/dev/xvda1      8.0G  1.5G  6.6G  19% /
+
+tmpfs            99M     0   99M   0% /run/user/0
+
+tmpfs            99M     0   99M   0% /run/user/1000
+
+/dev/xvdf       976M  1.3M  924M   1% /mnt/data-store
+```
+On your mounted volume, create a file and add some text to it.
+```
+sudo sh -c "echo some text has been written > /mnt/data-store/file.txt"
+```
+Verify that the text has been written to your volume.
+```
+cat /mnt/data-store/file.txt
+```
+# Create an Amazon EBS Snapshot
+In your remote SSH session, delete the file that you created on your volume.
+```
+sudo rm /mnt/data-store/file.txt
+```
+Verify that the file has been deleted.
+```
+ls /mnt/data-store/
+```
+Your file has been deleted.
+# Mount the Restored Volume
+Create a directory for mounting the new storage volume:
+```
+sudo mkdir /mnt/data-store2
+```
+
+Mount the new volume:
+```
+sudo mount /dev/sdg /mnt/data-store2
+```
+ 
+Verify that volume you mounted has the file that you created earlier.
+```
+ls /mnt/data-store2/
+```
+You should see file.txt.

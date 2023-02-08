@@ -1,0 +1,19 @@
+Try to install and configure wordpress by remote exec, but do not work as expected.
+
+To configure wordpress:
+$ wget https://wordpress.org/latest.tar.gz
+$ tar -xzf latest.tar.gz
+$ cd wordpress
+$ cp wp-config-sample.php wp-config.php
+
+
+$ vi wp-config.php
+Replace values of: DB_NAME, DB_USER, DB_PASSWORD, DB_HOST as in the Terraform output part. 
+
+$ cd /home/ec2-user
+
+$ sudo cp -r wordpress/* /var/www/html/
+
+$ sudo service httpd restart
+
+and then locate to the dns of the EC2

@@ -1,0 +1,2 @@
+ aws cloudwatch set-alarm-state --alarm-name TerminateEC2OnHighCPU --state-value ALARM --state-reason "Testing"
+
